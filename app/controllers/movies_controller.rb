@@ -10,7 +10,9 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
-  def index
+def index
+    
+    
     if params[:sort]
       session[:sort] = params[:sort]
       @movies = Movie.all.order(session[:sort])
@@ -19,7 +21,21 @@ class MoviesController < ApplicationController
     else
       @movies = Movie.all
     end
-  end
+    
+    @all_ratings = Movie.ratings
+    
+    if params[:ratings]
+      session[:ratings] = params[:ratings]
+      @selected_ratings = session[:ratings].keys
+    elsif session[:ratings]
+      @selected_ratings = session[:ratings].keys
+    else
+      @selected_ratings = @all_ratings
+    end
+    
+    @movies =  @movies.where(:rating => @selected_ratings)
+    
+end
 
   def new
     # default: render 'new' template
